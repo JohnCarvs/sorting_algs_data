@@ -25,6 +25,11 @@
 #define ALGQSORT3INS 6
 #define ALGSHELLSORT 7
 #define ALGRECSEL    8
+#define ALGBUBBLE    9
+#define ALGMERGE     10
+#define ALGCOUNTING  11
+#define ALGBUCKET    12
+#define ALGRADIX     13
 
 std::ofstream initTextFile(std::string path){
   std::ofstream arquivo(path);
@@ -49,7 +54,7 @@ typedef struct alg{
 } alg_t;
 
 alg_t algvet[]={
-  {ALGINSERTION,"i"},
+ {ALGINSERTION,"i"},
   {ALGSELECTION,"s"},
   {ALGQSORT,"q"},
   {ALGQSORT3,"q3"},
@@ -57,6 +62,11 @@ alg_t algvet[]={
   {ALGQSORT3INS,"q3i"},
   {ALGSHELLSORT,"h"},
   {ALGRECSEL,"rs"},
+  {ALGBUBBLE,"b"},
+  {ALGMERGE,"m"},
+  {ALGCOUNTING,"c"},
+  {ALGBUCKET,"bk"},
+  {ALGRADIX,"rx"},
   {0,0}
 };
 
@@ -375,6 +385,157 @@ void quickSort3Ins(int * A, int l, int r, sortperf_t *s) {
     }
 }
 
+// XXXXXXXXXXXX ALGS GUI XXXXXXXXXXXXXX
+
+void bubbleSort(int * A, int l, int r, sortperf_t *s){
+  inccalls(s, 1);
+  int i,j;
+  for(i = l; i < r-1; i++){
+    for(j = 1; j <= r-i; j++){
+      inccmp(s, 1);
+      if(A[j] < A[j-1]){
+        swap(&A[j-1], &A[j], s);
+        inccmp(s, 1);                   
+      }
+    }
+  }
+}
+
+void merge (int *A, int l, int r, int m, sortperf *s){
+  inccalls(s, 1);
+  int p1, p2, i, j, k;
+  p1 = m - l + 1;
+  p2 = r - m;
+  int E[p1], D[p2];
+  for(i = 0; i < p1; i++){
+    E[i] = A[l + i];
+  }
+  for(j = 0; j < p2; j++){
+    D[j] = A[m + 1 + j];
+  }
+  i = 0;
+  j = 0;
+  k = l;
+  while(i < p1 && j < p2){
+    inccmp(s, 1);
+    if(E[i] <= D[j]){
+      A[k] = E[i];
+      i++;
+    }else{
+      A[k] = D[j];
+      j++;
+    }
+    k++;
+  }
+  while(i < p1){
+    A[k] = E[i];
+    i++;
+    k++;
+  }
+  while(j < p2){
+    A[k] = D[j];
+    j++;
+    k++;
+  }
+}
+
+void mergeSort(int * A, int l, int r, sortperf_t *s){
+  inccalls(s, 1);
+  if(l < r){
+    int m = l + (r - l)/2;
+    mergeSort(A, l, m, s);
+    mergeSort(A, m+1, r, s);
+    merge(A, l, r, m, s);
+  }
+}
+
+void coutingSort(int * A, int l, int r, sortperf_t *s){
+  inccalls(s, 1);
+  int i, j, k;
+  int max = A[l];
+  for(i = l; i <= r; i++){
+    inccmp(s, 1);
+    if(A[i] > max){
+      max = A[i];
+    }
+  }
+  int counts[max];
+  for(i=0; i <= max; i++){
+    counts[i] = 0;
+  }
+  for(j = l; j <= r; j++){
+    counts[A[j]]++;
+  }
+  j = l;
+  for(k = 0; k <= max; k++){
+    while(counts[k] > 0){
+      A[j] = k;
+      counts[k]--;
+      j++;
+    }
+  }
+}
+
+void bucketSort(int * A, int l, int r, sortperf_t *s){
+  int i, j, k, w;
+  int max = A[l];
+  for(i = l; i <= r; i++){
+    inccmp(s, 1);
+    if(A[i] > max){
+      max = A[i];
+    }
+  }
+  int nb = r;
+  int bucket[nb][r-l+1];
+  int bucket_tam[nb];
+  for(i = 0; i < nb; i++){
+    bucket_tam[i] = 0;
+  }
+  for(j = l; j <= r; j++){
+    int bi = (A[j] * nb)/(max + 1);
+    bucket[bi][bucket_tam[bi]++] = A[j];
+  }
+  k = l;
+  for(i = 0; i < nb; i++){
+    for(j = 0; j < bucket_tam[i]; j++){
+      A[k++] = bucket[i][j];
+    }
+  }
+}
+
+void radixSort(int * A, int l, int r, sortperf_t *s){
+    int i, j, m = A[l], exp = 1;
+    int bucket[r - l + 1][10]; // Bucket sem alocação de memória
+    
+    for(i = l + 1; i <= r; i++) {
+        if (A[i] > m)
+            m = A[i];
+    }
+    
+    while (m / exp > 0) {
+        int bucketCount[10] = {0};
+        
+        for (i = l; i <= r; i++)
+            bucketCount[(A[i] / exp) % 10]++;
+        
+        for (i = 1; i < 10; i++)
+            bucketCount[i] += bucketCount[i - 1];
+        
+        for (i = r; i >= l; i--) {
+            j = (A[i] / exp) % 10;
+            bucketCount[j]--;
+            bucket[bucketCount[j]][(A[i] / exp) % 10] = A[i];
+        }
+        
+        for (i = l, j = 0; i <= r; i++, j++)
+            A[i] = bucket[j][(A[i] / exp) % 10];
+        
+        exp *= 10;
+    }
+}
+
+// XXXXXXXXXXXXXXXXXXXX FIM ALGS GUI XXXXXXXXXXXXXXXXXX
+
 //---------------------------------------------------------------------------
 // FIM: DEFINIÇÃO DOS ALGORÍTMOS 
 //---------------------------------------------------------------------------
@@ -533,11 +694,10 @@ int main (int argc, char ** argv){
 
 
   // loop principal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-  for(int alg=1 ; alg<=8 ; alg++){
+  for(int alg=1 ; alg<=13 ; alg++){
     arquivo << "alg " << num2name(alg) << std::endl<<std::endl;
     arquivo << "SEED ,  SIZE ,  ALG ,  TYPE ,  CALLS ,  CMP ,     MOVE ,    TIME              ,"<< std::endl;
     
-    //teste git
     for(int type=0 ; type<=2 ; type ++){
       arquivo << "TYPE"<<type<< std::endl;
 
