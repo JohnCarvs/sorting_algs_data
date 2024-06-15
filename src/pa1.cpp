@@ -537,6 +537,7 @@ int main (int argc, char ** argv){
     arquivo << "alg " << num2name(alg) << std::endl<<std::endl;
     arquivo << "SEED ,  SIZE ,  ALG ,  TYPE ,  CALLS ,  CMP ,     MOVE ,    TIME              ,"<< std::endl;
     
+    //teste git
     for(int type=0 ; type<=2 ; type ++){
       arquivo << "TYPE"<<type<< std::endl;
 
