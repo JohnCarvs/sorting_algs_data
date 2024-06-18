@@ -758,11 +758,10 @@ int main (int argc, char ** argv){
 
   // loop principal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   for(int alg=1 ; alg<=12 ; alg++){
-    arquivo[alg-1] << "alg " << num2name(alg) << std::endl<<std::endl;
     arquivo[alg-1] << "SEED ,  SIZE ,  ALG ,  TYPE ,  CALLS ,  CMP ,     MOVE ,    TIME              ,"<< std::endl;
     
     for(int type=0 ; type<=2 ; type ++){
-      arquivo[alg-1] << "TYPE"<<type<< std::endl;
+      //arquivo[alg-1] << "TYPE"<<type<< std::endl;
 
      for(int size=5 ; size<=4000 ; size=size+40){
 
