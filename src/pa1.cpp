@@ -17,6 +17,8 @@
 #include <ctime>
 #include <cstdint>
 #include <vector>
+#include <fstream> 
+#include <sstream> 
 
 #define ALGINSERTION 1
 #define ALGSELECTION 2
@@ -33,8 +35,8 @@
 #define ALGRADIX     13
 
 std::ofstream initTextFile(std::string path){
+  std::cout<< path << std::endl;
   std::ofstream arquivo(path);
-
     // Verificar se o arquivo foi aberto corretamente
     if (arquivo.is_open()) {
         auto agora = std::chrono::system_clock::now();
@@ -524,7 +526,7 @@ void bucketSort(int * A, int l, int r, sortperf_t *s){
     }
   }
   int nb = r;
-  int bucket[nb][500];
+  int bucket[nb][400];
   int bucket_tam[nb];
   for(i = 0; i < nb; i++){
     bucket_tam[i] = 0;
@@ -737,7 +739,12 @@ void execAlg(opt_t opt, int * vet, sortperf_t * s){
 int main (int argc, char ** argv){
   
   //Inicializa o arquivo de texto
-  std::ofstream arquivo = initTextFile("outputFiles/algs_execution_data.txt");
+  std::ofstream arquivo[13];
+  for(int fileIndex = 0 ; fileIndex <=12 ; fileIndex ++){
+    std::stringstream path;
+    path << "outputFiles/" << num2name(fileIndex+1) <<"_execution_data.txt";
+    arquivo[fileIndex] = initTextFile(path.str());
+}
 
   int * vet;
   char pref[100];
@@ -751,11 +758,11 @@ int main (int argc, char ** argv){
 
   // loop principal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   for(int alg=1 ; alg<=12 ; alg++){
-    arquivo << "alg " << num2name(alg) << std::endl<<std::endl;
-    arquivo << "SEED ,  SIZE ,  ALG ,  TYPE ,  CALLS ,  CMP ,     MOVE ,    TIME              ,"<< std::endl;
+    arquivo[alg-1] << "alg " << num2name(alg) << std::endl<<std::endl;
+    arquivo[alg-1] << "SEED ,  SIZE ,  ALG ,  TYPE ,  CALLS ,  CMP ,     MOVE ,    TIME              ,"<< std::endl;
     
     for(int type=0 ; type<=2 ; type ++){
-      arquivo << "TYPE"<<type<< std::endl;
+      arquivo[alg-1] << "TYPE"<<type<< std::endl;
 
      for(int size=5 ; size<=4000 ; size=size+40){
 
@@ -787,7 +794,7 @@ int main (int argc, char ** argv){
           */
 
           
-          arquivo << seed<< " ,    " << size<<" ,     "<< num2name(alg) << " ,    "<< type <<" ,     "<< s.calls<< " ,     " << s.cmp <<" ,    "<< s.move << " ,    "<<restp.tv_nsec/100<< "         ,"<< std::endl;
+          arquivo[alg-1] << seed<< " ,    " << size<<" ,     "<< num2name(alg) << " ,    "<< type <<" ,     "<< s.calls<< " ,     " << s.cmp <<" ,    "<< s.move << " ,    "<<restp.tv_nsec/100<< "         ,"<< std::endl;
 
           
           //Printar o vetor depois da ordenação
@@ -801,13 +808,17 @@ int main (int argc, char ** argv){
       }
 
    }
-    arquivo << std::endl << std::endl;
+    arquivo[alg-1] << std::endl << std::endl;
   }
  
 
   // print stats
   std::cout << "Fim da execução";
   
-  arquivo.close();
+  //fecha os arquivos
+  for(int fileIndex = 1 ; fileIndex <=12 ; fileIndex ++){    
+  arquivo[fileIndex].close();
+}
+
   exit(0);
 }
