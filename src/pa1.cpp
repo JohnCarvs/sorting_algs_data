@@ -477,11 +477,11 @@ void coutingSort(int * A, int l, int r, sortperf_t *s){
   }
 }
 
-void bucketSort(int * A, int l, int r, sortperf_t *s)
- //void bucketSort(float arr[], int n) 
+/*void bucketSort(int * A, int l, int r, sortperf_t *s)
  {
     // 1) Create n empty buckets
-    int b[r+1][r+1];
+    int rTeste=r;
+    int b[r+1][100];
 
     //1.1) Put -1 flags in buckets
     for(int i = 0; i<r; i++){
@@ -489,7 +489,7 @@ void bucketSort(int * A, int l, int r, sortperf_t *s)
         b[i][j] = -1;
       }
     }
-/*
+
     // 2) Put array elements in different buckets
     for (int i = 0; i <= r; i++) {
         int bi = (r+1) * A[i];
@@ -511,10 +511,38 @@ void bucketSort(int * A, int l, int r, sortperf_t *s)
         for (int j = 0; j < b[i].size(); j++) {
             arr[index++] = b[i][j];
         }
-    }*/
+    }
+}*/
+
+void bucketSort(int * A, int l, int r, sortperf_t *s){
+  int i, j, k, w;
+  int max = A[l];
+  for(i = l; i <= r; i++){
+    inccmp(s, 1);
+    if(A[i] > max){
+      max = A[i];
+    }
+  }
+  int nb = r;
+  int bucket[nb][500];
+  int bucket_tam[nb];
+  for(i = 0; i < nb; i++){
+    bucket_tam[i] = 0;
+  }
+  for(j = l; j <= r; j++){
+    int bi = (A[j] * nb)/(max + 1);
+    bucket[bi][bucket_tam[bi]++] = A[j];
+  }
+  k = l;
+  for(i = 0; i < nb; i++){
+    for(j = 0; j < bucket_tam[i]; j++){
+      A[k++] = bucket[i][j];
+    }
+  }
 }
 
-/*
+
+
 void radixSort(int * A, int l, int r, sortperf_t *s){
     int i, j, m = A[l], exp = 1;
     int bucket[r - l + 1][10]; // Bucket sem alocação de memória
@@ -523,7 +551,7 @@ void radixSort(int * A, int l, int r, sortperf_t *s){
         if (A[i] > m)
             m = A[i];
     }
-    
+   
     while (m / exp > 0) {
         int bucketCount[10] = {0};
         
@@ -538,14 +566,14 @@ void radixSort(int * A, int l, int r, sortperf_t *s){
             bucketCount[j]--;
             bucket[bucketCount[j]][(A[i] / exp) % 10] = A[i];
         }
-        
+         
         for (i = l, j = 0; i <= r; i++, j++)
             A[i] = bucket[j][(A[i] / exp) % 10];
         
         exp *= 10;
     }
 }
-*/
+
 // XXXXXXXXXXXXXXXXXXXX FIM ALGS GUI XXXXXXXXXXXXXXXXXX
 
 //---------------------------------------------------------------------------
@@ -699,10 +727,10 @@ void execAlg(opt_t opt, int * vet, sortperf_t * s){
     case ALGBUCKET:
          bucketSort(vet, 0, opt.size-1, s);
          break;
-  /*  case ALGRADIX:
+    case ALGRADIX:
          radixSort(vet, 0, opt.size-1, s);
          break;
-*/
+
   }
 }
 
@@ -722,14 +750,15 @@ int main (int argc, char ** argv){
 
 
   // loop principal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-  for(int alg=12 ; alg<=12 ; alg++){
+  for(int alg=13 ; alg<=13 ; alg++){
     arquivo << "alg " << num2name(alg) << std::endl<<std::endl;
     arquivo << "SEED ,  SIZE ,  ALG ,  TYPE ,  CALLS ,  CMP ,     MOVE ,    TIME              ,"<< std::endl;
     
     for(int type=0 ; type<=2 ; type ++){
       arquivo << "TYPE"<<type<< std::endl;
 
-      for(int size=5 ; size<=4000 ; size=size+40){
+     for(int size=5 ; size<=4000 ; size=size+40){
+
           //opt inicialização
           int seed = 27;
           init_args_num_Alg(seed,size,alg,type,&opt);
