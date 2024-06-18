@@ -750,7 +750,7 @@ int main (int argc, char ** argv){
 
 
   // loop principal XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-  for(int alg=13 ; alg<=13 ; alg++){
+  for(int alg=1 ; alg<=12 ; alg++){
     arquivo << "alg " << num2name(alg) << std::endl<<std::endl;
     arquivo << "SEED ,  SIZE ,  ALG ,  TYPE ,  CALLS ,  CMP ,     MOVE ,    TIME              ,"<< std::endl;
     
